@@ -1,43 +1,22 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Home from './screens/Home';
 import Scanner from './screens/Scanner';
-import { useState } from 'react';
 
-export default function App() {
-  const [allowScanScreen, setAllowScanScreen] = useState(false);
-  const goToScanScreen = () => {
-    setAllowScanScreen(true);
-  }
-  if (allowScanScreen){
-    return (
-      <Scanner />
-    );
-  }
+
+const Stack = createStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Button title="Scan A QR Code" onPress={goToScanScreen}/>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen name="Scanner" component={Scanner} />
+        
+        
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  qrDataContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginTop: 16,
-  },
-  qrDataText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  qrDataValue: {
-    fontSize: 16,
-  },
-});
+export default App;

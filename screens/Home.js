@@ -1,60 +1,45 @@
-import { StyleSheet, Text, ScrollView, View, Button } from 'react-native';
-import {React, useState, useEffect} from 'react';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import React, { useEffect, useState } from 'react'
+import { View, StyleSheet, Button, Text } from 'react-native'
+import styles from '../styles/styles';
+import axios from 'axios';
 
-const Home = () => {
-    const [hasPermission, setHasPermission] = useState(null);
-    const [scanned, setScanned] = useState(false);
-    const [text, setText] = useState('Not yet scannedd');
-    const askForCameraPermission = () => {
-        (async () => {
-            const status = await BarCodeScanner.askForCameraPermission();
-            setHasPermission(status == 'granted');
-        })()
-    }
+const Home = ({navigation}) => {
+    const [res, setRes] = useState('Loading');
+    const [hasLoaded, setHasLoaded] = useState(false);
     
+    const getToken = async () => {
+        try {
+          const response = await axios.post('http://192.168.1.11:8000/token');
+          const { access_token, payload } = response.data;
+          // Use the access_token as needed (e.g., store it in state, local storage, or use it for authenticated requests)
+          setRes(access_token);
+          console.log(access_token);
+          const {sub, exp} = payload;
+          console.log(sub);
+        } catch (error) {
+          // Handle the error
+          console.error(error);
+        }
+    };
+    
+
     useEffect(()=>{
+        getToken(); 
         
-        askForCameraPermission();
-    }, []);
 
- 
-
-    if (hasPermission === null){
-        return (
-            <View>
-                <Text>
-                    Requesting for Camera Permission
-                </Text>
-            </View>
-        );
-    }
-
-
+        
+    }, [])
+    useEffect(()=>{
+    }, [res]);
   return (
-    <View>
+    <View style={styles.container}>
         <Text>
-            {text}
+            {res}
         </Text>
+        <Button title="Scan QR Code" onPress={() => navigation.navigate('Scanner')} />
         
     </View>
   )
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFD95A',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    text: {
-        fontWeight: 700,
-        fontSize: 24,
-        padding: 40,
-        backgroundColor: "black",
-        color: "white",
-        margin: 0
 
-    }
-});
 export default Home
