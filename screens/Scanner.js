@@ -4,10 +4,9 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import App from '../App';
 import styles from '../styles/styles';
 
-const Scanner = () => {
+const Scanner = ({navigation}) => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
-    const [allowGoingBack, setAllowGoingBack] = useState(false);
     const [qrData, setQrData] = useState('');
   
     useEffect(() => {
@@ -19,6 +18,7 @@ const Scanner = () => {
   
     const handleBarCodeScanned = ({ type, data }) => {
       setScanned(true);
+      
       setQrData(data);
       // Handle the scanned QR code data here
       alert(`Scanned QR code: ${data}`);
@@ -30,17 +30,13 @@ const Scanner = () => {
     };
   
     if (hasPermission === null) {
+      
       return <Text>Requesting camera permission...</Text>;
     }
     if (hasPermission === false) {
       return <Text>No access to camera.</Text>;
     }
-    if (allowGoingBack){
-        return <App />
-    }
-    const goBack = () =>{
-      setAllowGoingBack(true);
-    }
+
     return (
       <View style={styles.container}>
         <BarCodeScanner
@@ -48,14 +44,9 @@ const Scanner = () => {
           style={StyleSheet.absoluteFillObject}
         />
   
-        {scanned && (
-          <View style={styles.qrDataContainer}>
-            <Text style={styles.qrDataText}>Scanned QR code:</Text>
-            <Text style={styles.qrDataValue}>{qrData}</Text>
-            <Button title="Re Scan" onPress={startScan} />
-            <Button title="Go Back" onPress={goBack} />
-          </View>
-        )}
+        {scanned && navigation.navigate('Result', {
+          result: qrData
+        })}
   
         {!scanned && (
           <>

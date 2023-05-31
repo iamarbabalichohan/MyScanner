@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Button, Text } from 'react-native'
+import { View, StyleSheet, Button, Text, SafeAreaView } from 'react-native'
 import styles from '../styles/styles';
 import axios from 'axios';
 
@@ -9,15 +9,10 @@ const Home = ({navigation}) => {
     
     const getToken = async () => {
         try {
-          const response = await axios.post('http://192.168.1.11:8000/token');
+          const response = await axios.post('http://192.168.124.7:8000/token');
           const { access_token, payload } = response.data;
-          // Use the access_token as needed (e.g., store it in state, local storage, or use it for authenticated requests)
           setRes(access_token);
-          console.log(access_token);
-          const {sub, exp} = payload;
-          console.log(sub);
         } catch (error) {
-          // Handle the error
           console.error(error);
         }
     };
@@ -32,13 +27,13 @@ const Home = ({navigation}) => {
     useEffect(()=>{
     }, [res]);
   return (
-    <View style={styles.container}>
-        <Text>
+    <SafeAreaView style={styles.container}>
+        <Text style={styles.text}>
             {res}
         </Text>
         <Button title="Scan QR Code" onPress={() => navigation.navigate('Scanner')} />
         
-    </View>
+    </SafeAreaView>
   )
 }
 
